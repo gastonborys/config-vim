@@ -4,22 +4,27 @@ Plug 'morhetz/gruvbox'
 Plug 'jremmen/vim-ripgrep'								
 Plug 'tpope/vim-fugitive'								" Plugin Git para VIM
 Plug 'leafgarland/typescript-vim'						" Integración TypeScript para vim
-Plug 'vim-utils/vim-man'								" Utilidad Manuales para vim
 Plug 'lyuts/vim-rtags'
 Plug 'git@github.com:kien/ctrlp.vim.git'				" Buscador de archivos
 Plug 'mbbill/undotree'									" explorador para deshacer cambios realizados
 Plug 'mattn/emmet-vim'									" snippets para html
 Plug 'preservim/nerdtree'								" Explorador de archivos
+Plug 'vim-scripts/dbext.vim'
 Plug 'preservim/tagbar'									" Plugin para las funciones, variables y clases en proyectos php 
+Plug 'nvim-tree/nvim-web-devicons'
+Plug 'romgrk/barbar.nvim'
 Plug 'ncm2/ncm2'
 Plug 'roxma/nvim-yarp'
 Plug 'rust-lang/rust.vim'								" Modo rust
 Plug 'jiangmiao/auto-pairs'								" Plugin para cerrar automágicamente las comillas, parentesis, corchetes y llaves.
+Plug 'tpope/vim-surround'
 Plug 'git@github.com:neoclide/coc.nvim', {'branch': 'release'}
 Plug 'othree/csscomplete.vim'							" Autocompletado de css
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}
-Plug 'ThePrimeagen/vim-be-good'
-Plug 'vim-airline/vim-airline'
+Plug 'jelera/vim-javascript-syntax'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'peitalin/vim-jsx-typescript'
 call plug#end()
 
 set noerrorbells
@@ -33,20 +38,26 @@ set smartcase
 set noswapfile
 set relativenumber
 
+set ignorecase
 set nobackup
 set undodir=~/.vim/undodir
 set undofile
 set incsearch
 
 colorscheme gruvbox
+let g:gruvbox_contrast_dark = "hard"
 set background=dark
 set cursorline
 set cursorcolumn
 highlight CursorColumn guibg=black ctermbg=black
 highlight CursorLine guibg=black ctermbg=black
+
+let g:python_host_prog="/usr/bin/python3.8"
+
 " Mapeo de teclas
 let mapleader = " "
 
+tnoremap <C-w><C-\> <C-\><C-N>
 nnoremap <C-s> :w<CR>		" Guardar archivo con Control + s
 nnoremap <F2> :
 nnoremap <F3> :NERDTreeToggle<ENTER>
@@ -90,21 +101,31 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <buffer> <leader>gy <Plug>(coc-type-definition)
 nmap <buffer> <leader>gi <Plug>(coc-implementation)
 nnoremap <buffer> <leader>cr :CocRestart
+nmap <leader>gs :G<CR>
+nmap <leader>gd :Gdiff<CR>
+nmap <leader>gw :Gwrite<CR>
+nmap <leader>gf :Gvdiffsplit!<CR>
+nmap <leader>gj :diffget //2<CR>
+nmap <leader>gl :diffget //3<CR>
+nmap <leader>gp :G pull<CR>
+nmap <leader>gu :G push<CR>
+nmap <leader>gc :G commit<CR>
 
 "Emmet
 let g:user_emmet_mode='a'  "enable all functions, which is equal to
-let g:user_emmet_install_global = 0
+let g:user_emmet_install_global = 1
 imap <A-CR> <C-y>,
-autocmd FileType html,php EmmetInstall
-
+autocmd FileType html,php,js EmmetInstall
+autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
+autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 
 " vim ripgrep
 if executable('rg')
-	let g:rg_derive_root='true'
+    let g:rg_derive_root='true'
 endif
 
 " Tagbar
-let g:tagbar_ctags_bin = "/opt/bin/ctags"
+let g:tagbar_ctags_bin = "/usr/bin/ctags"
 
 "ControlP
 let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
@@ -118,3 +139,6 @@ let g:rtagsUseDefaultMappings = 0
 
 "Moto automático para CSS
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
+
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+
