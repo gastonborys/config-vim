@@ -1,18 +1,19 @@
-syntax on
+syntax enable
 call plug#begin('~/.vim/plugged')
 Plug 'morhetz/gruvbox'
+Plug 'hoob3rt/lualine.nvim', { 'tag': 'compat-nvim-0.5' }
 Plug 'jremmen/vim-ripgrep'								
 Plug 'tpope/vim-fugitive'								" Plugin Git para VIM
 Plug 'leafgarland/typescript-vim'						" Integración TypeScript para vim
 Plug 'lyuts/vim-rtags'
 Plug 'git@github.com:kien/ctrlp.vim.git'				" Buscador de archivos
+Plug 'git@github.com:AndrewRadev/tagalong.vim'
 Plug 'mbbill/undotree'									" explorador para deshacer cambios realizados
 Plug 'mattn/emmet-vim'									" snippets para html
 Plug 'preservim/nerdtree'								" Explorador de archivos
 Plug 'vim-scripts/dbext.vim'
 Plug 'preservim/tagbar'									" Plugin para las funciones, variables y clases en proyectos php 
-Plug 'nvim-tree/nvim-web-devicons'
-Plug 'romgrk/barbar.nvim'
+Plug 'nvim-tree/nvim-tree.lua'
 Plug 'ncm2/ncm2'
 Plug 'roxma/nvim-yarp'
 Plug 'rust-lang/rust.vim'								" Modo rust
@@ -25,6 +26,7 @@ Plug 'jelera/vim-javascript-syntax'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'peitalin/vim-jsx-typescript'
+Plug 'nvim-tree/nvim-web-devicons'
 call plug#end()
 
 set noerrorbells
@@ -45,12 +47,15 @@ set undofile
 set incsearch
 
 colorscheme gruvbox
-let g:gruvbox_contrast_dark = "hard"
 set background=dark
 set cursorline
 set cursorcolumn
 highlight CursorColumn guibg=black ctermbg=black
 highlight CursorLine guibg=black ctermbg=black
+
+lua << END
+require('lualine').setup()
+END
 
 let g:python_host_prog="/usr/bin/python3.8"
 
@@ -110,6 +115,8 @@ nmap <leader>gl :diffget //3<CR>
 nmap <leader>gp :G pull<CR>
 nmap <leader>gu :G push<CR>
 nmap <leader>gc :G commit<CR>
+nmap <leader>da yitvatp 
+nmap <leader>et ysit
 
 "Emmet
 let g:user_emmet_mode='a'  "enable all functions, which is equal to
@@ -135,10 +142,13 @@ let g:netrw_banner = 0
 let g:netrw_winsize = 30
 
 let g:rtagsUseDefaultMappings = 0
+let g:tagalong_filetypes = ['html', 'jsx', 'php', 'typescriptreact', 'xml']
 
 
 "Moto automático para CSS
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
 
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+
+set mouse=a
 
