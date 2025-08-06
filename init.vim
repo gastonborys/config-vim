@@ -1,33 +1,47 @@
 syntax enable
 call plug#begin('~/.vim/plugged')
+
 Plug 'morhetz/gruvbox'
+Plug 'equalsraf/neovim-gui-shim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'hoob3rt/lualine.nvim', { 'tag': 'compat-nvim-0.5' }
 Plug 'jremmen/vim-ripgrep'								
-Plug 'tpope/vim-fugitive'								" Plugin Git para VIM
-Plug 'leafgarland/typescript-vim'						" Integración TypeScript para vim
-Plug 'lyuts/vim-rtags'
-Plug 'git@github.com:kien/ctrlp.vim.git'				" Buscador de archivos
+Plug 'tpope/vim-fugitive'
+Plug 'leafgarland/typescript-vim'
+Plug 'git@github.com:kien/ctrlp.vim.git'
 Plug 'git@github.com:AndrewRadev/tagalong.vim'
-Plug 'mbbill/undotree'									" explorador para deshacer cambios realizados
-Plug 'mattn/emmet-vim'									" snippets para html
-Plug 'preservim/nerdtree'								" Explorador de archivos
-Plug 'vim-scripts/dbext.vim'
-Plug 'preservim/tagbar'									" Plugin para las funciones, variables y clases en proyectos php 
-Plug 'nvim-tree/nvim-tree.lua'
-Plug 'ncm2/ncm2'
-Plug 'roxma/nvim-yarp'
-Plug 'rust-lang/rust.vim'								" Modo rust
-Plug 'jiangmiao/auto-pairs'								" Plugin para cerrar automágicamente las comillas, parentesis, corchetes y llaves.
+Plug 'mbbill/undotree'
+Plug 'mattn/emmet-vim'
+Plug 'preservim/nerdtree'
+Plug 'preservim/tagbar'
+Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
-Plug 'git@github.com:neoclide/coc.nvim', {'branch': 'release'}
-Plug 'othree/csscomplete.vim'							" Autocompletado de css
+Plug 'othree/csscomplete.vim'
 Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 Plug 'jelera/vim-javascript-syntax'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'nvim-tree/nvim-web-devicons'
+
+" LSP + herramientas modernas
+Plug 'neovim/nvim-lspconfig'
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
+Plug 'simrat39/rust-tools.nvim'
+
+" Autocompletado
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'L3MON4D3/LuaSnip'
+
 call plug#end()
+
+let g:python_host_prog="/usr/bin/python3"
+let g:GuiClipboard = 1
+
+set indentexpr=
+filetype plugin indent on
 
 set noerrorbells
 set tabstop=4
@@ -56,8 +70,6 @@ highlight CursorLine guibg=black ctermbg=black
 lua << END
 require('lualine').setup()
 END
-
-let g:python_host_prog="/usr/bin/python3.8"
 
 " Mapeo de teclas
 let mapleader = " "
@@ -100,12 +112,17 @@ nnoremap <leader>u :UndotreeShow<CR> " Cierro el explorador del deshacer
 nnoremap <leader>0 :q<CR>
 inoremap <C-Space> <C-x><C-o>
 nnoremap <silent>qq gt
+nnoremap <leader>rr :!cargo run<CR>
+nnoremap <leader>rb :!cargo build<CR>
+nnoremap <leader>rt :!cargo test<CR>
+nnoremap <leader>rf :!cargo fmt<CR>
+nnoremap <leader>rc :!cargo clippy<CR>
+nnoremap <silent> gd :lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> gr :lua vim.lsp.buf.references()<CR>
+nnoremap <silent> rn :lua vim.lsp.buf.rename()<CR>
+nnoremap <silent> K  :lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> <leader>ca :lua vim.lsp.buf.code_action()<CR>
 
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> gd <Plug>(coc-definition)
-nmap <buffer> <leader>gy <Plug>(coc-type-definition)
-nmap <buffer> <leader>gi <Plug>(coc-implementation)
-nnoremap <buffer> <leader>cr :CocRestart
 nmap <leader>gs :G<CR>
 nmap <leader>gd :Gdiff<CR>
 nmap <leader>gw :Gwrite<CR>
@@ -148,7 +165,63 @@ let g:tagalong_filetypes = ['html', 'jsx', 'php', 'typescriptreact', 'xml']
 "Moto automático para CSS
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
 
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
-
 set mouse=a
 
+lua << EOF
+require('lualine').setup()
+
+local ts = require("nvim-treesitter.configs")
+ts.setup {
+    highlight = {
+        enable = true,
+    }
+}
+
+require("mason").setup()
+require("mason-lspconfig").setup({
+ensure_installed = { "ts_ls", "rust_analyzer" }
+})
+
+local lspconfig = require("lspconfig")
+lspconfig.ts_ls.setup {}
+
+local cmp = require'cmp'
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body)
+    end
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ['<Tab>'] = cmp.mapping.select_next_item(),
+    ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+  }),
+  sources = {
+    { name = 'nvim_lsp' },
+  }
+})
+
+local rt = require("rust-tools")
+rt.setup({
+  server = {
+    on_attach = function(_, bufnr)
+      vim.keymap.set("n", "<leader>ca", rt.code_action_group.code_action_group, { buffer = bufnr })
+      vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = bufnr })
+      vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = bufnr })
+    end,
+    settings = {
+      ["rust-analyzer"] = {
+        cargo = {
+          allFeatures = true,
+        },
+        checkOnSave = {
+          command = "clippy"
+        },
+      }
+    }
+  }
+})
+
+EOF
