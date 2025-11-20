@@ -30,6 +30,7 @@ Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'simrat39/rust-tools.nvim'
 
+Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
 " Autocompletado
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -44,9 +45,9 @@ set indentexpr=
 filetype plugin indent on
 
 set noerrorbells
+set noexpandtab
 set tabstop=4
 set shiftwidth=4
-set expandtab
 set smartindent
 set nu
 set nowrap
@@ -186,6 +187,7 @@ local lspconfig = require("lspconfig")
 lspconfig.ts_ls.setup {}
 
 local cmp = require'cmp'
+
 cmp.setup({
   snippet = {
     expand = function(args)
@@ -198,9 +200,20 @@ cmp.setup({
     ['<Tab>'] = cmp.mapping.select_next_item(),
     ['<S-Tab>'] = cmp.mapping.select_prev_item(),
   }),
-  sources = {
+  sources = cmp.config.sources({
     { name = 'nvim_lsp' },
-  }
+    { name = 'cmp_tabnine' },
+    { name = 'luasnip' },
+    { name = 'buffer' },
+    { name = 'path' },
+  }),
+})
+
+local tabnine = require('cmp_tabnine.config')
+tabnine:setup({
+  max_lines = 1000;
+  max_num_results = 5;
+  sort = true;
 })
 
 local rt = require("rust-tools")
@@ -222,6 +235,12 @@ rt.setup({
       }
     }
   }
+})
+
+vim.api.nvim_create_autocmd("CursorHold", {
+  callback = function()
+    vim.diagnostic.open_float(nil, { focusable = false })
+  end,
 })
 
 EOF
