@@ -23,6 +23,7 @@ Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'nvim-tree/nvim-web-devicons'
+Plug 'editorconfig/editorconfig-vim'
 
 " LSP + herramientas modernas
 Plug 'neovim/nvim-lspconfig'
