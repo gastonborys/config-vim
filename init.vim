@@ -139,8 +139,8 @@ nnoremap <leader>gf :Gvdiffsplit!<CR> " Abrir diff vertical
 nnoremap <leader>gj :diffget //2<CR>  " Tomar cambios de base //2
 nnoremap <leader>gl :diffget //3<CR>  " Tomar cambios de otro //3
 nnoremap <leader>gc :G commit<CR>     " Git commit
-nnoremap <leader>gp :Gpull<CR>       " Git pull
-nnoremap <leader>gu :Gpush<CR>       " Git push
+nnoremap <leader>gp :G pnll<CR>       " Git pull
+nnoremap <leader>gu :G push<CR>       " Git push
 nnoremap <leader>grn :Greset --hard HEAD~<CR> " Resetear HEAD anterior
 
 "=========================
