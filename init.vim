@@ -1,10 +1,14 @@
 syntax enable
 call plug#begin('~/.vim/plugged')
 
+" Temas y UI
 Plug 'morhetz/gruvbox'
 Plug 'equalsraf/neovim-gui-shim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'hoob3rt/lualine.nvim', { 'tag': 'compat-nvim-0.5' }
+Plug 'nvim-tree/nvim-web-devicons'
+
+" Herramientas de desarrollo
 Plug 'jremmen/vim-ripgrep'								
 Plug 'tpope/vim-fugitive'
 Plug 'leafgarland/typescript-vim'
@@ -22,29 +26,29 @@ Plug 'jelera/vim-javascript-syntax'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'peitalin/vim-jsx-typescript'
-Plug 'nvim-tree/nvim-web-devicons'
 Plug 'editorconfig/editorconfig-vim'
 
-" LSP + herramientas modernas
+" LSP y herramientas modernas
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'simrat39/rust-tools.nvim'
 
-Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
-" Autocompletado
+" Autocompletado y snippets
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'L3MON4D3/LuaSnip'
 
 call plug#end()
 
+" =========================
+" Config básicas
+" =========================
 let g:python_host_prog="/usr/bin/python3"
 let g:GuiClipboard = 1
 
 set indentexpr=
 filetype plugin indent on
-
 set noerrorbells
 set noexpandtab
 set tabstop=4
@@ -55,12 +59,12 @@ set nowrap
 set smartcase
 set noswapfile
 set relativenumber
-
 set ignorecase
 set nobackup
 set undodir=~/.vim/undodir
 set undofile
 set incsearch
+set mouse=a
 
 colorscheme gruvbox
 set background=dark
@@ -69,25 +73,34 @@ set cursorcolumn
 highlight CursorColumn guibg=black ctermbg=black
 highlight CursorLine guibg=black ctermbg=black
 
+" =========================
+" Lualine
+" =========================
 lua << END
 require('lualine').setup()
 END
 
-" Mapeo de teclas
+
+" =========================
+" Keymaps
+" =========================
 let mapleader = " "
 
+" =========================
+" Mapeos generales
+" =========================
 tnoremap <C-w><C-\> <C-\><C-N>
-nnoremap <C-s> :w<CR>		" Guardar archivo con Control + s
+nnoremap <C-s> :w<CR>										" Guardar archivo con Control + s
 nnoremap <F2> :
 nnoremap <F3> :NERDTreeToggle<ENTER>
 nnoremap <F4> :bufdo bd<CR>
 nnoremap <F5> :source ~/.config/nvim/init.vim<CR>
 nnoremap <F8> :TagbarToggle<CR>
-nnoremap <F10> :qa<CR>		" Salir del vim con F10
+nnoremap <F10> :qa<CR>										" Salir del vim con F10
 nnoremap <C-F10> :qa!<CR>
 nnoremap <C-S-z> :u<CR>
-nnoremap <C-x>h :%!xxd<CR>								" Modo Hexadecimal
-nnoremap <C-x>n :%!xxd -r<CR>							" Salir del modo Hexadecimal
+nnoremap <C-x>h :%!xxd<CR>									" Modo Hexadecimal
+nnoremap <C-x>n :%!xxd -r<CR>								" Salir del modo Hexadecimal
 inoremap <C-v> <ESC>"+pa
 vnoremap <C-c> "+y
 vnoremap <C-d> "+d
@@ -114,134 +127,125 @@ nnoremap <leader>u :UndotreeShow<CR> " Cierro el explorador del deshacer
 nnoremap <leader>0 :q<CR>
 inoremap <C-Space> <C-x><C-o>
 nnoremap <silent>qq gt
-nnoremap <leader>rr :!cargo run<CR>
-nnoremap <leader>rb :!cargo build<CR>
-nnoremap <leader>rt :!cargo test<CR>
-nnoremap <leader>rf :!cargo fmt<CR>
-nnoremap <leader>rc :!cargo clippy<CR>
+
+
+"=========================
+" Mapeos de Git (vim-fugitive)
+" =========================
+nnoremap <leader>gs :G<CR>           " Git status
+nnoremap <leader>gd :Gdiff<CR>       " Diff del archivo
+nnoremap <leader>gw :Gwrite<CR>      " Guardar cambios en git
+nnoremap <leader>gf :Gvdiffsplit!<CR> " Abrir diff vertical
+nnoremap <leader>gj :diffget //2<CR>  " Tomar cambios de base //2
+nnoremap <leader>gl :diffget //3<CR>  " Tomar cambios de otro //3
+nnoremap <leader>gc :G commit<CR>     " Git commit
+nnoremap <leader>gp :Gpull<CR>       " Git pull
+nnoremap <leader>gu :Gpush<CR>       " Git push
+nnoremap <leader>grn :Greset --hard HEAD~<CR> " Resetear HEAD anterior
+
+"=========================
+" Mapeos de Git (vim-fugitive)
+" =========================
 nnoremap <silent> gd :lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> gr :lua vim.lsp.buf.references()<CR>
-nnoremap <silent> rn :lua vim.lsp.buf.rename()<CR>
+nnoremap <silent> ren :lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> K  :lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> <leader>ca :lua vim.lsp.buf.code_action()<CR>
 
-nmap <leader>gs :G<CR>
-nmap <leader>gd :Gdiff<CR>
-nmap <leader>gw :Gwrite<CR>
-nmap <leader>gf :Gvdiffsplit!<CR>
-nmap <leader>gj :diffget //2<CR>
-nmap <leader>gl :diffget //3<CR>
-nmap <leader>gp :G pull<CR>
-nmap <leader>gu :G push<CR>
-nmap <leader>gc :G commit<CR>
-nmap <leader>da yitvatp 
-nmap <leader>et ysit
 
-"Emmet
-let g:user_emmet_mode='a'  "enable all functions, which is equal to
+" =========================
+" Emmet
+" =========================
+let g:user_emmet_mode='a'
 let g:user_emmet_install_global = 1
 imap <A-CR> <C-y>,
 autocmd FileType html,php,js EmmetInstall
 autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
 autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 
-" vim ripgrep
-if executable('rg')
-    let g:rg_derive_root='true'
-endif
-
-" Tagbar
-let g:tagbar_ctags_bin = "/usr/bin/ctags"
-
-"ControlP
-let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
-let g:ctrlp_use_caching = 0
-let g:netrw_browse_split=2
-let g:netrw_banner = 0
-let g:netrw_winsize = 30
-
-let g:rtagsUseDefaultMappings = 0
-let g:tagalong_filetypes = ['html', 'jsx', 'php', 'typescriptreact', 'xml']
-
-
-"Moto automático para CSS
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
-
-set mouse=a
-
+" =========================
+" Mason + LSP
+" =========================
 lua << EOF
-require('lualine').setup()
-
-local ts = require("nvim-treesitter.configs")
-ts.setup {
-    highlight = {
-        enable = true,
-    }
-}
-
 require("mason").setup()
 require("mason-lspconfig").setup({
-ensure_installed = { "ts_ls", "rust_analyzer" }
+    ensure_installed = { "ts_ls", "rust_analyzer", "gopls" }
 })
 
 local lspconfig = require("lspconfig")
+
+-- TypeScript
 lspconfig.ts_ls.setup {}
 
-local cmp = require'cmp'
-
-cmp.setup({
-  snippet = {
-    expand = function(args)
-      require('luasnip').lsp_expand(args.body)
-    end
-  },
-  mapping = cmp.mapping.preset.insert({
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }),
-    ['<Tab>'] = cmp.mapping.select_next_item(),
-    ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-  }),
-  sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
-    { name = 'cmp_tabnine' },
-    { name = 'luasnip' },
-    { name = 'buffer' },
-    { name = 'path' },
-  }),
+-- Go
+lspconfig.gopls.setup({
+    settings = {
+        gopls = {
+            gofumpt = true,
+            analyses = { unusedparams = true },
+            staticcheck = true,
+        }
+    }
 })
 
-local tabnine = require('cmp_tabnine.config')
-tabnine:setup({
-  max_lines = 1000;
-  max_num_results = 5;
-  sort = true;
-})
-
+-- Rust
 local rt = require("rust-tools")
 rt.setup({
-  server = {
-    on_attach = function(_, bufnr)
-      vim.keymap.set("n", "<leader>ca", rt.code_action_group.code_action_group, { buffer = bufnr })
-      vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = bufnr })
-      vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = bufnr })
-    end,
-    settings = {
-      ["rust-analyzer"] = {
-        cargo = {
-          allFeatures = true,
+    server = {
+        on_attach = function(_, bufnr)
+            vim.keymap.set("n", "<leader>ca", rt.code_action_group.code_action_group, { buffer = bufnr })
+            vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = bufnr })
+            vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = bufnr })
+        end,  -- <--- FIN de la función on_attach
+        settings = {
+            ["rust-analyzer"] = {
+                cargo = { allFeatures = true },
+                checkOnSave = { command = "clippy" },
+            }
         },
-        checkOnSave = {
-          command = "clippy"
-        },
-      }
-    }
-  }
-})
+    }, -- <--- FIN de server
+}) -- <--- FIN de rt.setup
+EOF
 
-vim.api.nvim_create_autocmd("CursorHold", {
-  callback = function()
-    vim.diagnostic.open_float(nil, { focusable = false })
-  end,
-})
+" =========================
+" nvim-cmp + LuaSnip
+" =========================
+lua << EOF
+local cmp = require'cmp'
+local luasnip = require'luasnip'
 
+-- Cargar todos los snippets Lua de ~/.config/nvim/snippets
+require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })
+
+cmp.setup({
+    snippet = {
+        expand = function(args)
+            luasnip.lsp_expand(args.body)
+        end,
+    },
+    mapping = {
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        ['<Tab>'] = cmp.mapping(function(fallback)
+            if luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+        ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+    },
+    sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' },
+        { name = 'buffer' },
+        { name = 'path' },
+    }),
+})
 EOF
