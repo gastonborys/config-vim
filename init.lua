@@ -77,6 +77,11 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- Shim compatibilidad 0.12dev
+package.preload["nvim-treesitter.configs"] = function()
+  return require("nvim-treesitter.config")
+end
+
 -- =========================
 -- Plugins
 -- =========================
@@ -131,27 +136,39 @@ require("lazy").setup({
 			"nvim-treesitter/nvim-treesitter",
 			build = ":TSUpdate",
 			dependencies = {
-				"nvim-treesitter/nvim-treesitter-textobjects",
-				branch="master"
+				{
+					"nvim-treesitter/nvim-treesitter-textobjects",
+				},
 			},
 			config = function()
 				require("nvim-treesitter.config").setup({
-						ensure_installed = { "typescript", "tsx", "javascript", "rust", "go", "php", "lua" },
-						highlight = { enable = true },
-						indent = { enable = true },
-						textobjects = {
+					ensure_installed = {
+						"typescript",
+						"tsx",
+						"javascript",
+						"rust",
+						"go",
+						"php",
+						"lua",
+						"c_sharp",
+					},
+
+					highlight = { enable = true },
+					indent = { enable = true },
+
+					textobjects = {
 						select = {
-						enable = true,
-						lookahead = true,
-						keymaps = {
-						["af"] = "@function.outer",
-						["if"] = "@function.inner",
-						["am"] = "@method.outer",
-						["im"] = "@method.inner",
+							enable = true,
+							lookahead = true,
+							keymaps = {
+								["af"] = "@function.outer",
+								["if"] = "@function.inner",
+								["am"] = "@method.outer",
+								["im"] = "@method.inner",
+							},
 						},
-						},
-						},
-						})
+					},
+				})
 			end,
 		},
 		-- Prisma syntax highlighting
@@ -161,16 +178,16 @@ require("lazy").setup({
 		{ "neovim/nvim-lspconfig" },
 
 		{ "williamboman/mason.nvim",
-			config = function()
-				require("mason").setup()
-				end,
-		},
+		config = function()
+			require("mason").setup()
+		end,
+	},
 
-		{ "williamboman/mason-lspconfig.nvim",
-			dependencies = { "williamboman/mason.nvim" },
-			config = function()
-				require("mason-lspconfig").setup({
-						ensure_installed = { "ts_ls", "rust_analyzer", "gopls", "prisma-language-server" },
+	{ "williamboman/mason-lspconfig.nvim",
+	dependencies = { "williamboman/mason.nvim" },
+	config = function()
+		require("mason-lspconfig").setup({
+			ensure_installed = { "ts_ls", "rust_analyzer", "gopls", "prisma-language-server" },
 						})
 			end,
 		},
@@ -438,7 +455,7 @@ map("n", "<leader>gl",  ":diffget //3<CR>",         { silent = true })
 map("n", "<leader>gc",  ":G commit<CR>",            { silent = true })
 map("n", "<leader>gp",  ":G pull<CR>",              { silent = true })
 map("n", "<leader>gu",  ":G push<CR>",              { silent = true })
-map("n", "<leader>grn", ":Greset --hard HEAD~<CR>", { silent = true })
+map("n", "<leader>grs", ":Greset --soft HEAD~1<CR>", { silent = true })
 
 -- Diagnósticos
 map("n", "<leader>e", vim.diagnostic.open_float, { silent = true })
