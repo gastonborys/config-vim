@@ -481,3 +481,9 @@ vim.keymap.set("n", "<leader>cp", function()
     vim.notify("Copilot no está instalado: " .. tostring(err), vim.log.levels.WARN)
   end
 end)
+
+-- =========================
+-- NERDTree: bookmark -> cd + C
+-- =========================
+vim.g.NERDTreeChDirMode = 2  -- cambia CWD automáticamente al cambiar root
+vim.g.NERDTreeQuitOnOpen = 2
