@@ -254,6 +254,7 @@ require("lazy").setup({
 			config = function()
 				vim.keymap.set("n", "<leader>gb", ":GitBlameToggle<CR>", { desc = "Toggle Git Blame" })
 			end
+		},
 
 		-- Herramientas
 		{ "jremmen/vim-ripgrep" },
