@@ -555,6 +555,13 @@ map("n", "<leader>gp",  ":G pull<CR>",              { silent = true })
 map("n", "<leader>gu",  ":G push<CR>",              { silent = true })
 map("n", "<leader>grs", ":Greset --soft HEAD~1<CR>", { silent = true })
 
+-- Lazy Git
+local map = vim.keymap.set
+
+map("n", "<leader>gg", function()
+  vim.cmd("tabnew | terminal lazygit")
+  vim.cmd("startinsert")
+end, { desc = "Open LazyGit" })
 -- Diagnósticos
 map("n", "<leader>e", vim.diagnostic.open_float, { silent = true })
 map("n", "[d",        vim.diagnostic.goto_prev,  { silent = true })
