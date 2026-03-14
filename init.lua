@@ -306,6 +306,31 @@ require("lazy").setup({
 				vim.keymap.set("n", "<leader>fg", builtin.live_grep,  { desc = "Live grep" })
 			end,
 		},
+
+		{ "akinsho/toggleterm.nvim",
+		  config = function()
+			require("toggleterm").setup()
+
+			local Terminal = require("toggleterm.terminal").Terminal
+
+			local opencode = Terminal:new({
+			  cmd        = "opencode",
+			  direction  = "float",
+			  float_opts = { border = "rounded" },
+			  hidden     = true,
+			})
+
+			local lazygit = Terminal:new({
+			  cmd        = "lazygit",
+			  direction  = "float",
+			  float_opts = { border = "rounded" },
+			  hidden     = true,
+			})
+
+			vim.keymap.set("n", "<leader>oc", function() opencode:toggle() end, { desc = "OpenCode" })
+			vim.keymap.set("n", "<leader>gg", function() lazygit:toggle() end,  { desc = "LazyGit" })
+		  end,
+		},
 		-- Herramientas
 		{ "jremmen/vim-ripgrep" },
 		{ "tpope/vim-fugitive" },
