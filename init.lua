@@ -331,6 +331,14 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>gg", function() lazygit:toggle() end,  { desc = "LazyGit" })
 		  end,
 		},
+
+		{ "windwp/nvim-autopairs",
+		  event = "InsertEnter",
+		  config = function()
+			require("nvim-autopairs").setup()
+		  end,
+		},
+
 		-- Herramientas
 		{ "jremmen/vim-ripgrep" },
 		{ "tpope/vim-fugitive" },
@@ -340,7 +348,6 @@ require("lazy").setup({
 		{ "mattn/emmet-vim" },
 		{ "preservim/nerdtree" },
 		{ "preservim/tagbar" },
-		{ "jiangmiao/auto-pairs" },
 		{ "tpope/vim-surround" },
 		{ "othree/csscomplete.vim" },
 		{ "mg979/vim-visual-multi", branch = "master" },
