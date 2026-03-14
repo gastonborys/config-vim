@@ -592,3 +592,10 @@ end)
 -- =========================
 vim.g.NERDTreeChDirMode = 2  -- cambia CWD automáticamente al cambiar root
 vim.g.NERDTreeQuitOnOpen = 2
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "svelte",
+  callback = function()
+    pcall(vim.treesitter.start)
+  end,
+})
