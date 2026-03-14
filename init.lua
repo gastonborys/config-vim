@@ -146,11 +146,16 @@ require("lazy").setup({
 						"typescript",
 						"tsx",
 						"javascript",
+						"svelte",
+						"html",
+						"css",
 						"rust",
 						"go",
 						"php",
 						"lua",
 						"c_sharp",
+						"markdown",
+						"markdown_inline"
 					},
 
 					highlight = { enable = true },
