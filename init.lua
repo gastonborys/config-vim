@@ -562,6 +562,7 @@ map("n", "<leader>gg", function()
   vim.cmd("tabnew | terminal lazygit")
   vim.cmd("startinsert")
 end, { desc = "Open LazyGit" })
+
 -- Diagnósticos
 map("n", "<leader>e", vim.diagnostic.open_float, { silent = true })
 map("n", "[d",        vim.diagnostic.goto_prev,  { silent = true })
