@@ -256,47 +256,6 @@ require("lazy").setup({
 			end
 		},
 
-		{
-			"yetone/avante.nvim",
-			event = "VeryLazy",
-			build = "make",
-			dependencies = {
-				"nvim-treesitter/nvim-treesitter",
-				"stevearc/dressing.nvim",
-				"nvim-lua/plenary.nvim",
-				"MunifTanjim/nui.nvim",
-				"nvim-tree/nvim-web-devicons",
-				{ "zbirenbaum/copilot.lua", lazy = true, config = function()
-					require("copilot").setup({
-						suggestion = { enabled = false },
-						panel      = { enabled = false },
-					})
-				end,
-			},
-		},
-			config = function()
-				require("avante").setup({
-					provider = "copilot",
-					providers = {
-						ollama = {
-							__inherited_from = "openai",
-							api_key_name     = "",
-							endpoint         = "http://localhost:11434/v1",
-							model            = "qwen2.5-coder:7b",
-						},
-						copilot = {
-							model = "claude-sonnet-4-5",
-						},
-					},
-					mappings = {
-						ask     = "<leader>aa",
-						edit    = "<leader>ae",
-						refresh = "<leader>ar",
-					},
-				})
-			end,
-		},
-
 		{ "nvim-telescope/telescope.nvim",
 			dependencies = { "nvim-lua/plenary.nvim" },
 			config = function()
